@@ -1,0 +1,12 @@
+#Django >= 1.8, < 1.9
+Django < 1.9rc1
+
+requests
+
+redis
+celery==3.1.19
+
+restless==2.0.1
+
+coverage
+factory-boy==2.6.0
