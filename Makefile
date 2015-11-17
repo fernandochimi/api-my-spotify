@@ -4,7 +4,8 @@ test:
 
 html:
 		coverage html
-		open htmlcov/index.html
+		# open htmlcov/index.html
+		xdg-open htmlcov/index.html
 
 clean:
 		find . -name "*.pyc" -exec rm -rf {} \;

@@ -4,13 +4,18 @@ import factory
 
 from datetime import datetime
 
-from api.models import ApiToken
+from api.models import ApiToken, SpotifyInfo
 
 
-class ApiTokenFactoru(factory.django.DjangoModelFactory):
+class ApiTokenFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ApiToken
 
     token = uuid.uuid4()
     date_added = datetime.now()
     is_active = True
+
+
+class SpotifyInfoFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = SpotifyInfo

@@ -1,2 +1,2 @@
-from factories import *
-from test_models import *
+from .factories import *
+from .test_models import *
