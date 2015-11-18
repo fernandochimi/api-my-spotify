@@ -7,7 +7,7 @@ from factories import ApiTokenFactory, SpotifyUserFactory,\
     SpotifyUserPlaylistFactory
 
 
-class SpotifyUserResourceTest(TestCase):
+class SpotifyResourceTest(TestCase):
     def setUp(self):
         self.token = ApiTokenFactory()
         self.user = SpotifyUserFactory()

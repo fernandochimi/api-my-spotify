@@ -81,3 +81,4 @@ STATIC_URL = '/static/'
 
 # Variables API Spotify
 URL_API = "https://api.spotify.com/v1/users/"
+OAUTH_TOKEN = "BQAYDu4V9Ci7qSfoS4gSLtotxiZHVr4FvXyx5MobGXg72mHijJ"

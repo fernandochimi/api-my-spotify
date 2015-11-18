@@ -29,7 +29,7 @@ class BaseResource(DjangoResource):
             raise Unauthorized
 
 
-class SpotifyUserResource(BaseResource):
+class SpotifyResource(BaseResource):
     fields = {
         "name": "name",
         "user_id": "user_id",
@@ -39,7 +39,7 @@ class SpotifyUserResource(BaseResource):
     }
 
     def __init__(self, *args, **kwargs):
-        super(SpotifyUserResource, self).__init__(*args, **kwargs)
+        super(SpotifyResource, self).__init__(*args, **kwargs)
         self.http_methods.update({
             "user_playlist": {
                 "GET": "user_playlist",
@@ -69,22 +69,22 @@ class SpotifyUserResource(BaseResource):
             "link": user_id.get("external_urls").get("spotify"),
         }
 
-    def get_playlist_data(self, playlist):
+    def get_playlist_data(self, playlist_user):
         logger.info(
             u"Get Playlist of User {0} from Spotify API".format(
-                playlist.user.name))
-        try:
-            response = requests.get(
-                settings.URL_API +
-                playlist.user.user_id + "/playlist/", timeout=5).json()
-            return self.prepare_playlist_data(response)
-        except:
-            logger.info(
-                u"Playlist of User {0} does not exist".format(
-                    playlist.user.name))
-            raise HttpError(
-                msg=u"Playlist of User {0} not found".format(
-                    playlist.user.name))
+                playlist_user))
+        # try:
+        response = requests.get(
+            settings.URL_API +
+            playlist_user + "/playlists/", timeout=5).json()
+        print type(response)
+        print response
+        return self.prepare_playlist_data(response)
+        # except:
+        #     logger.info(
+        #         u"Playlist of User {0} does not exist".format(playlist_user))
+        #     raise HttpError(
+        #         msg=u"Playlist of User {0} not found".format(playlist_user))
 
     def queryset(self, request):
         return SpotifyUser.objects.all()
@@ -100,30 +100,24 @@ class SpotifyUserResource(BaseResource):
                 user_id=user_task.get("user.user_id"))
 
     @skip_prepare
-    def user_playlist(self):
-        print self
-        print dir(self)
+    def user_playlist(self, pk):
         self.preparer.fields = self.fields
         try:
-            playlist = SpotifyUserPlaylist.objects.all()
+            playlist = SpotifyUserPlaylist.objects.get(user=pk)
         except:
-            # get_playlist = self.get_playlist_data(self.)
-            pass
+            print 'EXCEPT'
+            playlist = self.get_playlist_data(playlist_user=pk)
+            print playlist
         return {
             "fields": {
                 "user": playlist.user,
                 "name": playlist.name,
                 "link": playlist.link,
                 "playlist_id": playlist.playlist_id,
-            }
+            },
         }
 
     @classmethod
     def urls(cls, name_prefix=None):
-        urlpatterns = super(SpotifyUserResource, cls).urls(
-            name_prefix=name_prefix)
-        return urlpatterns + patterns(
-            "",
-            url(r"^playlists/$", cls.as_view("user_playlist"),
-                name=cls.build_url_name("user_playlist", name_prefix)),
-        )
+        urlpatterns = super(SpotifyResource, cls).urls(name_prefix=name_prefix)
+        return urlpatterns
