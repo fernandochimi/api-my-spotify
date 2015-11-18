@@ -3,7 +3,8 @@ import logging
 import requests
 
 from django.conf import settings
-from django.conf.urls import patterns, url
+
+from requests_oauthlib import OAuth1
 
 from restless.dj import DjangoResource
 from restless.preparers import FieldsPreparer
@@ -12,7 +13,7 @@ from restless.resources import skip_prepare
 
 from models import ApiToken, SpotifyUser,\
     SpotifyUserPlaylist
-from tasks import create_user
+from tasks import create_user, create_playlist
 
 logger = logging.getLogger("api_my_spotify.api.resources")
 
@@ -74,17 +75,30 @@ class SpotifyResource(BaseResource):
             u"Get Playlist of User {0} from Spotify API".format(
                 playlist_user))
         # try:
+        headers = {"Authorization": "Bearer " + settings.OAUTH_TOKEN}
         response = requests.get(
-            settings.URL_API +
-            playlist_user + "/playlists/", timeout=5).json()
-        print type(response)
-        print response
+            settings.URL_API + playlist_user +
+            "/playlists/", headers=headers, timeout=5).json()
         return self.prepare_playlist_data(response)
         # except:
         #     logger.info(
         #         u"Playlist of User {0} does not exist".format(playlist_user))
         #     raise HttpError(
         #         msg=u"Playlist of User {0} not found".format(playlist_user))
+
+    def prepare_playlist_data(self, playlist_user):
+        try:
+            playlist = playlist_user["items"]
+            for item in playlist:
+                dict_items = {
+                    "user": item["owner"][0].get("id"),
+                    "name": item["name"],
+                    "link": item["external_urls"][0].get("spotify"),
+                    "playlist_id": item["id"],
+                }
+                return dict_items
+        except:
+            return {}
 
     def queryset(self, request):
         return SpotifyUser.objects.all()
@@ -105,9 +119,11 @@ class SpotifyResource(BaseResource):
         try:
             playlist = SpotifyUserPlaylist.objects.get(user=pk)
         except:
-            print 'EXCEPT'
-            playlist = self.get_playlist_data(playlist_user=pk)
-            print playlist
+            playlist_info = self.get_playlist_data(playlist_user=pk)
+            playlist_task = create_playlist.delay(playlist_info)
+            playlist = SpotifyUserPlaylist.objects.get(
+                playlist_id=playlist_task.get("playlist.playlist_id"))
+
         return {
             "fields": {
                 "user": playlist.user,
@@ -116,8 +132,3 @@ class SpotifyResource(BaseResource):
                 "playlist_id": playlist.playlist_id,
             },
         }
-
-    @classmethod
-    def urls(cls, name_prefix=None):
-        urlpatterns = super(SpotifyResource, cls).urls(name_prefix=name_prefix)
-        return urlpatterns

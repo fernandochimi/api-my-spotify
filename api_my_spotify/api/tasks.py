@@ -26,13 +26,16 @@ def create_user(user_id):
 
 @celery_app.task
 def create_playlist(playlist):
+    print playlist
+    print dir(playlist)
     logger.info(
-        u"Start creation of Playlist of the User {0}".format(playlist["name"]))
+        u"Start creation of Playlist of the User {0}".format(
+            playlist.get("name")))
     playlist, created = SpotifyUserPlaylist.objects.get_or_create(
-        user=playlist["user_id"],
-        name=playlist["name"],
-        link=playlist["link"],
-        playlist_id=playlist["playlist_id"],
+        user=playlist.get("user_id"),
+        name=playlist.get("name"),
+        link=playlist.get("link"),
+        playlist_id=playlist.get("playlist_id"),
     )
     logger.info(u"Playlist(s) inserted with success")
     return playlist.playlist_id
