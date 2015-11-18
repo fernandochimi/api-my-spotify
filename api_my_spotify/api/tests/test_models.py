@@ -10,7 +10,7 @@ class ApiTokenTest(TestCase):
         self.token = ApiTokenFactory()
 
     def test_01_unicode(self):
-        "token must be a unicode"
+        "Token must be a unicode"
         self.assertEqual(unicode(self.token), u'{0}'.format(self.token.token))
 
 
@@ -19,7 +19,7 @@ class SpotifyUserTest(TestCase):
         self.user = SpotifyUserFactory()
 
     def test_01_unicode(self):
-        "user_id must be a unicode"
+        "User ID must be a unicode"
         self.assertEqual(unicode(self.user), u'{0}'.format(self.user.user_id))
 
 
@@ -28,6 +28,6 @@ class SpotifyUserPlaylistTest(TestCase):
         self.playlist = SpotifyUserPlaylistFactory()
 
     def test_01_unicode(self):
-        "playlist_id must be a unicode"
+        "Playlist ID must be a unicode"
         self.assertEqual(
             unicode(self.playlist), u'{0}'.format(self.playlist.playlist_id))
