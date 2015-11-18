@@ -46,24 +46,45 @@ class SpotifyUserResource(BaseResource):
             },
         })
 
-    def get_spotify_data(self, user_id):
+    def get_user_data(self, user_id):
         logger.info(u"Get User ID {0} from Spotify API".format(user_id))
         try:
             response = requests.get(
                 settings.URL_API + user_id, timeout=5).json()
-            return self.prepare_spotify_data(response)
+            return self.prepare_user_data(response)
         except:
             logger.info(u"User with ID {0} does not exist".format(user_id))
             raise HttpError(msg=u"User with ID {0} not found".format(user_id))
 
-    def prepare_spotify_data(self, user_id):
+    def prepare_user_data(self, user_id):
+        try:
+            picture_user = user_id["images"][0].get("url")
+        except:
+            picture_user = None
         return {
             "name": user_id.get("display_name"),
             "user_id": user_id.get("id"),
             "followers": user_id.get("followers").get("total"),
-            "picture": user_id["images"][0].get("url"),
+            "picture": picture_user,
             "link": user_id.get("external_urls").get("spotify"),
         }
+
+    def get_playlist_data(self, playlist):
+        logger.info(
+            u"Get Playlist of User {0} from Spotify API".format(
+                playlist.user.name))
+        try:
+            response = requests.get(
+                settings.URL_API +
+                playlist.user.user_id + "/playlist/", timeout=5).json()
+            return self.prepare_playlist_data(response)
+        except:
+            logger.info(
+                u"Playlist of User {0} does not exist".format(
+                    playlist.user.name))
+            raise HttpError(
+                msg=u"Playlist of User {0} not found".format(
+                    playlist.user.name))
 
     def queryset(self, request):
         return SpotifyUser.objects.all()
@@ -73,14 +94,21 @@ class SpotifyUserResource(BaseResource):
         try:
             return self.queryset(request=self.request).get(user_id=pk)
         except:
-            user_info = self.get_spotify_data(user_id=pk)
+            user_info = self.get_user_data(user_id=pk)
             user_task = create_user.delay(user_info)
             return self.queryset(request=self.request).get(
                 user_id=user_task.get("user.user_id"))
 
     @skip_prepare
     def user_playlist(self):
-        playlist = SpotifyUserPlaylist.objects.all()
+        print self
+        print dir(self)
+        self.preparer.fields = self.fields
+        try:
+            playlist = SpotifyUserPlaylist.objects.all()
+        except:
+            # get_playlist = self.get_playlist_data(self.)
+            pass
         return {
             "fields": {
                 "user": playlist.user,

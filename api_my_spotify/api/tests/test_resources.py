@@ -40,9 +40,15 @@ class SpotifyUserResourceTest(TestCase):
         create_usr = create_user.delay("fernandochimi")
         self.assertTrue("fernandochimi", True)
 
-    # def test_04_get_user_playlists(self):
-    #     "Get the user playlists"
-    #     response = self.client.get(
-    #         "/api/v1/suser/{0}/playlists/?token={1}".format(
-    #             self.user.user_id, self.token.token))
-    #     self.assertEqual(response.status_code, 200)
+    def test_04_user_does_not_exist(self):
+        "User does not exist"
+        response = self.client.get(
+            "/api/v1/suser/user-not-exist/?token={0}".format(self.token.token))
+        self.assertEqual(response.status_code, 500)
+
+    def test_05_get_user_playlists(self):
+        "Get the user playlists"
+        response = self.client.get(
+            "/api/v1/suser/{0}/playlists/?token={1}".format(
+                self.user.user_id, self.token.token))
+        self.assertEqual(response.status_code, 200)
