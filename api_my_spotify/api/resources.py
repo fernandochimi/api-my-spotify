@@ -12,6 +12,7 @@ from restless.resources import skip_prepare
 
 from models import ApiToken, SpotifyUser,\
     SpotifyUserPlaylist
+from tasks import create_user
 
 logger = logging.getLogger("api_my_spotify.api.resources")
 
@@ -50,24 +51,32 @@ class SpotifyUserResource(BaseResource):
         try:
             response = requests.get(
                 settings.URL_API + user_id, timeout=5).json()
-            print response
-            return response
+            return self.prepare_spotify_data(response)
         except:
             logger.info(u"User with ID {0} does not exist".format(user_id))
             raise HttpError(msg=u"User with ID {0} not found".format(user_id))
+
+    def prepare_spotify_data(self, user_id):
+        return {
+            "name": user_id.get("display_name"),
+            "user_id": user_id.get("id"),
+            "followers": user_id.get("followers").get("total"),
+            "picture": user_id["images"][0].get("url"),
+            "link": user_id.get("external_urls").get("spotify"),
+        }
 
     def queryset(self, request):
         return SpotifyUser.objects.all()
 
     def detail(self, pk):
         self.preparer.fields = self.fields
-        print pk
-        print type(pk)
         try:
             return self.queryset(request=self.request).get(user_id=pk)
         except:
             user_info = self.get_spotify_data(user_id=pk)
-            return user_info
+            user_task = create_user.delay(user_info)
+            return self.queryset(request=self.request).get(
+                user_id=user_task.get("user.user_id"))
 
     @skip_prepare
     def user_playlist(self):

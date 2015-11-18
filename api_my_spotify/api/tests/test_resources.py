@@ -14,11 +14,11 @@ class SpotifyUserResourceTest(TestCase):
         self.playlist = SpotifyUserPlaylistFactory()
 
         self.new_user = SpotifyUserFactory.create(
-            name="Fernando Chimicoviaki",
-            user_id="fernandochimi",
+            name="De Tal Fulano",
+            user_id="detalfulano",
             followers="4",
             picture=None,
-            link="https://open.spotify.com/user/fernandochimi",
+            link="https://open.spotify.com/user/detalfulano",
         )
 
     def test_01_unauthorized(self):
@@ -33,11 +33,11 @@ class SpotifyUserResourceTest(TestCase):
             self.user.user_id, self.token.token))
         self.assertEqual(response.status_code, 200)
 
-    def test_03_get_user_info(self):
+    def test_03_create_user(self):
         "Get the user info on Spotify API and save on Database"
-        self.client.get("/api/v1/suser/{0}/?token={1}".format(
-            self.new_user.user_id, self.token.token))
-        create_user.delay("fernandochimi")
+        response = self.client.get(
+            "/api/v1/suser/fernandochimi/?token={0}".format(self.token.token))
+        create_usr = create_user.delay("fernandochimi")
         self.assertTrue("fernandochimi", True)
 
     # def test_04_get_user_playlists(self):

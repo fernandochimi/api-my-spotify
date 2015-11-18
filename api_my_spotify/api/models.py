@@ -20,10 +20,10 @@ class ApiToken(models.Model):
 
 
 class SpotifyUser(models.Model):
-    name = models.CharField(u"name", max_length=250)
+    name = models.CharField(u"name", max_length=250, null=True, blank=True)
     user_id = models.CharField(
         u"user id", max_length=128, primary_key=True, unique=True)
-    followers = models.IntegerField(u"followers")
+    followers = models.IntegerField(u"followers", null=True, blank=True)
     picture = models.URLField(
         u"picture path", max_length=250, null=True, blank=True)
     link = models.URLField(u"url", max_length=250)
