@@ -40,9 +40,11 @@ class SpotifyResource(BaseResource):
         try:
             response = requests.get(
                 settings.URL_API + user_id, timeout=5).json()
+            logger.debug(
+                u"Get User ID {0} to prepare with success".format(user_id))
             return self.prepare_user_data(response)
         except:
-            logger.info(u"User with ID {0} does not exist".format(user_id))
+            logger.error(u"User with ID {0} does not exist".format(user_id))
             raise HttpError(msg=u"User with ID {0} not found".format(user_id))
 
     def prepare_user_data(self, user_id):

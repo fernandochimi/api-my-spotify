@@ -41,7 +41,7 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'null': {
-            'class': 'logging.NullHandler',
+            'class': 'django.utils.log.NullHandler',
         },
     },
 
