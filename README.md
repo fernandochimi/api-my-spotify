@@ -1,4 +1,7 @@
-![alt text](https://play.spotify.edgekey.net/site/19b6d34/images/favicon.png "Spotify") # api-my-spotify
+# api-my-spotify
+
+![alt text](https://play.spotify.edgekey.net/site/19b6d34/images/favicon.png "Spotify")
+
 API to access Spotify informations and other things
 
 ## How to use
