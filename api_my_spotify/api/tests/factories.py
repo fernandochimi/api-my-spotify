@@ -4,7 +4,7 @@ import factory
 
 from datetime import datetime
 
-from api.models import ApiToken, SpotifyUser, SpotifyUserPlaylist
+from api.models import ApiToken, SpotifyUser
 
 
 class ApiTokenFactory(factory.django.DjangoModelFactory):
@@ -27,15 +27,3 @@ class SpotifyUserFactory(factory.django.DjangoModelFactory):
         lambda n: "https://fbcdn-profile-a.akamaihd.net/%s" % n)
     link = factory.Sequence(
         lambda n: "https://open.spotify.com/user/fulano%s" % n)
-
-
-class SpotifyUserPlaylistFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = SpotifyUserPlaylist
-
-    user_id = factory.SubFactory(SpotifyUserFactory)
-    name = factory.Sequence(lambda n: "Playlist %s" % n)
-    link = factory.Sequence(
-        lambda n:
-        "http://open.spotify.com/user/reinaldoferreira/playlist/%s" % n)
-    playlist_id = factory.Sequence(lambda n: "playlistid%s" % n)

@@ -33,18 +33,3 @@ class SpotifyUser(models.Model):
 
     def __unicode__(self):
         return u"{0}".format(self.user_id)
-
-
-class SpotifyUserPlaylist(models.Model):
-    user = models.ForeignKey(SpotifyUser)
-    name = models.CharField(u"name", max_length=250)
-    link = models.URLField(u"url", max_length=250)
-    playlist_id = models.CharField(
-        u"playlist id", max_length=128, primary_key=True, unique=True)
-
-    class Meta:
-        verbose_name, verbose_name_plural = u"Spotify User Playlist",\
-            u"Spotify Users Playlists"
-
-    def __unicode__(self):
-        return u"{0}".format(self.playlist_id)
