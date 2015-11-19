@@ -1,2 +1,11 @@
 # api-my-spotify
 API to access Spotify informations and other things
+
+## How to use
+* Create a virtualenv (I prefer use ``virtualenvwrapper``).
+* Fork or clone this repo.
+* Install ``requirments.txt`` with ``pip install -r requirments.txt``
+* Run the project with ``./api_my_spotify/manage.py runserver --settings=settings.dev`` (Don't forget migrate if necessary)
+
+## TODO
+* Make a User's Playlists and Tracks
