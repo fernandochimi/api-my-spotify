@@ -1,3 +1,4 @@
+![](https://play.spotify.edgekey.net/site/19b6d34/images/favicon.png)
 # api-my-spotify
 API to access Spotify informations and other things
 
