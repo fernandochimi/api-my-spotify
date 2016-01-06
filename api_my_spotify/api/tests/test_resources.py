@@ -35,8 +35,8 @@ class SpotifyResourceTest(TestCase):
         "Get the user info on Spotify API and save on Database"
         self.client.get("/api/v1/suser/fernandochimi/?token={0}".format(
             self.token.token))
-        create_user.delay("fernandochimi")
-        self.assertTrue("fernandochimi", True)
+        new_user = create_user.delay("fernandochimi")
+        self.assertTrue(new_user, "fernandochimi")
 
     def test_04_user_does_not_exist(self):
         "User does not exist"
