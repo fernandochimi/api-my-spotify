@@ -1,6 +1,6 @@
 # api-my-spotify
 
-![alt text](https://play.spotify.edgekey.net/site/19b6d34/images/favicon.png "Spotify")
+![alt text](http://www.macupdate.com/images/icons256/33033.png "Spotify")
 
 API to access Spotify informations and other things
 
